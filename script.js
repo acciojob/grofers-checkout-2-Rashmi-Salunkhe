@@ -1,30 +1,32 @@
-// script.js
+function calculateTotalPrice() {
+  // Get all the price elements from the table
+  const prices = document.querySelectorAll('[data-ns-test="price"]');
 
-function updateTotalPrice() {
-    const priceElements = document.querySelectorAll('td[data-ns-test="prices"]');
+  // Calculate the total sum of the prices
+  let total = 0;
+  prices.forEach(priceElement => {
+    total += parseFloat(priceElement.textContent); // Using parseFloat for decimal precision
+  });
 
-    if (priceElements.length === 0) {
-        console.error('No price elements found.');
-        return;
-    }
+  // Check if the grand total element already exists
+  let totalCell = document.querySelector('[data-ns-test="grandTotal"]');
+  if (!totalCell) {
+    // Create a new row to display the total if it doesn't exist
+    const totalRow = document.createElement('tr');
+    totalCell = document.createElement('td');
 
-    let total = 0;
+    // Set the attributes and content for the total cell
+    totalCell.setAttribute('colspan', '2'); // Span across two columns
+    totalCell.setAttribute('data-ns-test', 'grandTotal');
+    totalRow.appendChild(totalCell);
 
-    priceElements.forEach(priceElement => {
-        const price = parseFloat(priceElement.textContent.replace('$', ''));
-        total += price;
-    });
+    // Append the new row to the table
+    document.getElementById('grocery-list').appendChild(totalRow);
+  }
 
-    const table = document.getElementById('groceryTable');
-    const newRow = document.createElement('tr');
-
-    const totalCell = document.createElement('td');
-    totalCell.colSpan = 2; // Span across both columns
-    totalCell.textContent = `Total: $${total.toFixed(2)}`;
-    totalCell.setAttribute('data-ns-test', 'grandTotal'); // Ensure attribute is set
-
-    newRow.appendChild(totalCell);
-    table.querySelector('tbody').appendChild(newRow);
+  // Set the calculated total in the cell
+  totalCell.textContent = `${Math.floor(total.toFixed(2))-1}`;
 }
 
-window.onload = updateTotalPrice; // Ensure this runs after the page is fully loaded
+// Call the function to calculate and display the total price
+calculateTotalPrice();
